@@ -74,9 +74,12 @@ const App = () => {
       fetch(file)
         .then((response) => response.text())
         .then((data) => searchInCSV(data))
+        .catch((error) => {
+          console.error('Error fetching or parsing CSV:', error);
+          return []; // Ritorna un array vuoto in caso di errore
+        })
     );
   
-
     Promise.all(searchPromises).then((resultsArray) => {
       const mergedResults = resultsArray.flat();
       if (mergedResults.length > 0) {
@@ -87,6 +90,7 @@ const App = () => {
       setIsLoading(false);
     });
   };
+  
 
   return (
     <div className="container">
