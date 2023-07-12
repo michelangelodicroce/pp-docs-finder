@@ -27,12 +27,6 @@ const App = () => {
   const [results, setResults] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
 
-  const transformURL = (url) => {
-    const docId = url.match(/\/d\/([^/]+)/)[1];
-    return `https://drive.google.com/open?id=${docId}`;
-  };
-  
-
   const handleInputChange = (event) => {
     setInputValue(event.target.value);
   };
@@ -51,20 +45,17 @@ const App = () => {
 
     for (let i = 1; i < rows.length; i++) {
       const row = rows[i].split(',');
-  
+
       for (let j = 0; j < searchValues.length; j++) {
         const searchValue = searchValues[j];
-  
-        const originalURL = row[destinationLocationIndex];
-        const transformedURL = transformURL(originalURL);
-  
-        if (transformedURL.includes(searchValue)) {
+
+        if (row[originalLocationIndex].includes(searchValue)) {
           const result = {
-            url: transformedURL,
+            url: row[destinationLocationIndex],
             owner: row[destinationOwnerIndex]
           };
           foundResults.push(result);
-          break;
+          break; 
         }
       }
     }
