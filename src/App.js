@@ -8,6 +8,7 @@ import chunk6CSV from './chunk_6.csv';
 import chunk7CSV from './chunk_7.csv';
 import chunk8CSV from './last_1.csv';
 import chunk9CSV from './last_2.csv';
+import regexpu from 'regexpu'
 import './App.css';
 
 const csvFiles = [
@@ -22,6 +23,12 @@ const csvFiles = [
   chunk9CSV,
 ];
 
+const extractIdFromURL = (url) => {
+  const urlPattern = regexpu('/[^/]+(?=/$|$)');
+  const match = url.match(urlPattern);
+  return match ? match[0] : url;
+};
+
 const App = () => {
   const [inputValue, setInputValue] = useState('');
   const [results, setResults] = useState([]);
@@ -34,24 +41,24 @@ const App = () => {
   const searchInCSV = (csvData) => {
     const rows = csvData.split('\n');
     const headers = rows[0].split(',');
-
+  
     const originalLocationIndex = headers.indexOf('OriginalLocation');
     const destinationLocationIndex = headers.indexOf('DestinationLocation');
     const destinationOwnerIndex = headers.indexOf('DestinationOwner');
-
+  
     const searchValues = inputValue.split(',').map((value) => value.trim());
-
+  
     const foundResults = [];
-
+  
     for (let i = 1; i < rows.length; i++) {
       const row = rows[i].split(',');
-
+  
       for (let j = 0; j < searchValues.length; j++) {
         const searchValue = searchValues[j];
-
+  
         if (row[originalLocationIndex].includes(searchValue)) {
           const result = {
-            url: row[destinationLocationIndex],
+            url: extractIdFromURL(row[destinationLocationIndex]),
             owner: row[destinationOwnerIndex]
           };
           foundResults.push(result);
@@ -59,7 +66,7 @@ const App = () => {
         }
       }
     }
-
+  
     return foundResults;
   };
 
