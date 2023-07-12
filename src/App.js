@@ -34,25 +34,22 @@ const App = () => {
   const searchInCSV = (csvData) => {
     const rows = csvData.split('\n');
     const headers = rows[0].split(',');
-  
+
     const originalLocationIndex = headers.indexOf('OriginalLocation');
     const destinationLocationIndex = headers.indexOf('DestinationLocation');
     const destinationOwnerIndex = headers.indexOf('DestinationOwner');
-  
+
     const searchValues = inputValue.split(',').map((value) => value.trim());
-  
+
     const foundResults = [];
-  
+
     for (let i = 1; i < rows.length; i++) {
       const row = rows[i].split(',');
-  
+
       for (let j = 0; j < searchValues.length; j++) {
         const searchValue = searchValues[j];
-        
-        // Modifica qui per ottenere solo la parte specifica dell'URL
-        const url = row[destinationLocationIndex].split('/').pop().split('?')[0];
-  
-        if (url.includes(searchValue)) {
+
+        if (row[originalLocationIndex].includes(searchValue)) {
           const result = {
             url: row[destinationLocationIndex],
             owner: row[destinationOwnerIndex]
@@ -62,24 +59,19 @@ const App = () => {
         }
       }
     }
-  
+
     return foundResults;
   };
-  
 
   const handleSearch = () => {
     setIsLoading(true);
-  
+
     const searchPromises = csvFiles.map((file) =>
       fetch(file)
         .then((response) => response.text())
         .then((data) => searchInCSV(data))
-        .catch((error) => {
-          console.error('Error fetching or parsing CSV:', error);
-          return []; // Ritorna un array vuoto in caso di errore
-        })
     );
-  
+
     Promise.all(searchPromises).then((resultsArray) => {
       const mergedResults = resultsArray.flat();
       if (mergedResults.length > 0) {
@@ -90,7 +82,6 @@ const App = () => {
       setIsLoading(false);
     });
   };
-  
 
   return (
     <div className="container">
